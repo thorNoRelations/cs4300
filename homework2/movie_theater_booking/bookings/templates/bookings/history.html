@@ -1,0 +1,44 @@
+{% extends "bookings/base.html" %}
+{% block title %}My Bookings{% endblock %}
+{% block content %}
+  <h1 class="mb-3">My Booking History</h1>
+  <div id="list" class="vstack gap-2"></div>
+
+  <script>
+    async function loadHistory() {
+      const res = await fetch("/api/bookings/");
+      if (res.status === 403 || res.status === 401) {
+        document.getElementById("list").innerHTML = `<div class="alert alert-warning">
+          Please <a href="/api-auth/login/?next=/history/">log in</a> to view your bookings.
+        </div>`;
+        return;
+      }
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : data.results;
+      const list = document.getElementById("list");
+      if (!items.length) {
+        list.innerHTML = `<div class="alert alert-info">No bookings yet.</div>`;
+        return;
+      }
+      list.innerHTML = "";
+      items.forEach(b => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <div>
+                <strong>${b.movie.title}</strong>
+                <div class="text-muted small">Seat ${b.seat.seat_number}</div>
+              </div>
+              <div class="text-end small text-muted">
+                Booked: ${new Date(b.booking_date).toLocaleString()}
+              </div>
+            </div>
+          </div>`;
+        list.appendChild(card);
+      });
+    }
+    loadHistory();
+  </script>
+{% endblock %}

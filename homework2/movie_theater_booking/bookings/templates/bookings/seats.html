@@ -1,0 +1,76 @@
+{% extends "bookings/base.html" %}
+{% block title %}Seats{% endblock %}
+{% block content %}
+  <h1 class="mb-1">Seats</h1>
+  <p class="text-muted">Selected movie: <span id="movie-title"></span></p>
+  <div class="d-flex gap-2 mb-3">
+    <button class="btn btn-outline-secondary btn-sm" onclick="loadSeats()">All</button>
+    <button class="btn btn-outline-success btn-sm" onclick="loadSeats(true)">Available only</button>
+  </div>
+  <div id="flash"></div>
+  <div id="seats" class="row row-cols-2 row-cols-md-5 g-2"></div>
+
+  <script>
+    const movieTitle = localStorage.getItem("selected_movie_title") || "(choose on Movies page)";
+    const movieId = localStorage.getItem("selected_movie_id");
+    document.getElementById("movie-title").textContent = movieTitle;
+
+    async function loadSeats(onlyAvailable=false) {
+      const url = onlyAvailable ? "/api/seats/available/" : "/api/seats/";
+      const res = await fetch(url);
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : data.results; // in case pagination is on
+      const grid = document.getElementById("seats");
+      grid.innerHTML = "";
+      items.forEach(s => {
+        const disabled = s.booking_status !== "available" || !movieId;
+        const badge = s.booking_status === "available" ? "bg-success" : "bg-secondary";
+        const col = document.createElement("div");
+        col.className = "col";
+        col.innerHTML = `
+          <div class="card text-center">
+            <div class="card-body">
+              <h6 class="card-title mb-2">Seat ${s.seat_number}</h6>
+              <span class="badge ${badge} text-uppercase">${s.booking_status}</span>
+            </div>
+            <div class="card-footer">
+              <button class="btn btn-primary btn-sm" ${disabled ? "disabled" : ""} onclick="bookSeat(${s.id})">
+                Book
+              </button>
+            </div>
+          </div>`;
+        grid.appendChild(col);
+      });
+    }
+
+    async function bookSeat(seatId) {
+      if (!movieId) {
+        flash("Select a movie first on the Movies page.", "warning");
+        return;
+      }
+      const res = await fetch(`/api/seats/${seatId}/book/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCSRFToken(),
+        },
+        body: JSON.stringify({ movie: Number(movieId) })
+      });
+      if (res.status === 201) {
+        flash("✅ Seat booked!", "success");
+        loadSeats(true);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        flash("❌ " + (err.detail || JSON.stringify(err)), "danger");
+      }
+    }
+
+    function flash(message, level) {
+      const el = document.getElementById("flash");
+      el.innerHTML = `<div class="alert alert-${level}">${message}</div>`;
+      setTimeout(() => el.innerHTML = "", 3500);
+    }
+
+    loadSeats(true);
+  </script>
+{% endblock %}
