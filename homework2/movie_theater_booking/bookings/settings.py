@@ -77,7 +77,7 @@ REST_FRAMEWORK = {
     ],
 }
 
-ROOT_URLCONF = 'bookings.urls'
+ROOT_URLCONF = "bookings.urls"
 WSGI_APPLICATION = "bookings.wsgi.application"
 
 TEMPLATES = [
@@ -95,9 +95,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'config.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
