@@ -1,44 +1,97 @@
 {% extends "bookings/base.html" %}
 {% block title %}My Bookings{% endblock %}
 {% block content %}
-  <h1 class="mb-3">My Booking History</h1>
-  <div id="list" class="vstack gap-2"></div>
+<style>
+  .accent-seat { color: var(--acid); font-weight: 700; letter-spacing: .3px; }
+  .accent-time { color: var(--acid-2); font-weight: 600; }
+</style>
 
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h1 class="mb-0">My Booking History</h1>
+  <button id="clearBtn" class="btn btn-outline-danger btn-sm">Clear My Bookings</button>
+</div>
+
+<div id="alert" class="alert d-none" role="alert"></div>
+
+<div id="list" class="vstack gap-2"></div>
   <script>
+    function itemsFromResponse(data) {
+      // handle DRF pagination or plain list
+      return Array.isArray(data) ? data : (data && data.results) ? data.results : [];
+    }
+
     async function loadHistory() {
       const res = await fetch("/api/bookings/");
+      const list = document.getElementById("list");
+
       if (res.status === 403 || res.status === 401) {
-        document.getElementById("list").innerHTML = `<div class="alert alert-warning">
+        list.innerHTML = `<div class="alert alert-warning">
           Please <a href="/api-auth/login/?next=/history/">log in</a> to view your bookings.
         </div>`;
         return;
       }
-      const data = await res.json();
-      const items = Array.isArray(data) ? data : data.results;
-      const list = document.getElementById("list");
-      if (!items.length) {
-        list.innerHTML = `<div class="alert alert-info">No bookings yet.</div>`;
-        return;
+
+      try {
+        const data = await res.json();
+        const items = itemsFromResponse(data);
+        if (!items.length) {
+          list.innerHTML = `<div class="alert alert-info">No bookings yet.</div>`;
+          return;
+        }
+        list.innerHTML = "";
+        items.forEach(b => {
+          const movieTitle = (b.movie && b.movie.title) ? b.movie.title : "(unknown)";
+          const seatNum = (b.seat && b.seat.seat_number) ? b.seat.seat_number : "(unknown)";
+          const bookedAt = b.booking_date ? new Date(b.booking_date).toLocaleString() : "";
+          const card = document.createElement("div");
+          card.className = "card";
+          card.innerHTML = `
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <strong>${movieTitle}</strong>
+                  <div class="text-muted small">Seat ${seatNum}</div>
+                </div>
+                <div class="text-end small text-muted">
+                  Booked: ${bookedAt}
+                </div>
+              </div>
+            </div>`;
+          list.appendChild(card);
+        });
+      } catch (e) {
+        list.innerHTML = `<div class="alert alert-danger">Failed to load: ${e.message}</div>`;
       }
-      list.innerHTML = "";
-      items.forEach(b => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <div>
-                <strong>${b.movie.title}</strong>
-                <div class="text-muted small">Seat ${b.seat.seat_number}</div>
-              </div>
-              <div class="text-end small text-muted">
-                Booked: ${new Date(b.booking_date).toLocaleString()}
-              </div>
-            </div>
-          </div>`;
-        list.appendChild(card);
-      });
     }
+
+    async function clearHistory() {
+      const btn = document.getElementById("clearBtn");
+      const alertBox = document.getElementById("alert");
+      btn.disabled = true;
+      alertBox.className = "alert d-none";
+      try {
+        const res = await fetch("/api/bookings/clear/", {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCSRFToken() || "",
+            "Content-Type": "application/json"
+          },
+          body: "{}"
+        });
+        if (!res.ok) throw new Error(`Failed: ${res.status}`);
+        const data = await res.json();
+        alertBox.className = "alert alert-success";
+        alertBox.textContent = `Cleared ${data.cleared || 0} booking(s).`;
+        await loadHistory();
+      } catch (e) {
+        alertBox.className = "alert alert-danger";
+        alertBox.textContent = e.message || "Failed to clear bookings.";
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    document.getElementById("clearBtn").addEventListener("click", clearHistory);
     loadHistory();
   </script>
 {% endblock %}

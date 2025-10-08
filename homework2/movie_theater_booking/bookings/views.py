@@ -102,7 +102,21 @@ class BookingViewSet(mixins.CreateModelMixin,
                 from django.core.exceptions import ValidationError
                 raise ValidationError({"seat": "This seat is already booked."})
             serializer.save(user=user, seat=seat_locked, movie=movie)
-
+    
+    @action(detail=False, methods=["post"], url_path="clear", permission_classes=[permissions.AllowAny])
+    def clear(self, request):
+        """
+        Clear all bookings for the current (or guest) user and free those seats.
+        POST /api/bookings/clear/
+        """
+        user = _resolve_user(request)  # uses your helper to pick request.user or the 'guest' user
+        seat_ids = list(Booking.objects.filter(user=user).values_list("seat_id", flat=True))
+        with transaction.atomic():
+            # free the seats first
+            Seat.objects.filter(id__in=seat_ids).update(booking_status=Seat.BookingStatus.AVAILABLE)
+            # then delete bookings
+            deleted, _ = Booking.objects.filter(user=user).delete()
+        return Response({"cleared": deleted})
 
 # ---------- TEMPLATE (SERVER) VIEWS ----------
 
