@@ -1,0 +1,5 @@
+Django==4.2.11
+djangorestframework
+django-environ
+gunicorn
+whitenoise
