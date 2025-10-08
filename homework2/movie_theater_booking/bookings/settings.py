@@ -39,7 +39,7 @@ else:
         SECRET_KEY = env("DJANGO_KEY")
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["127.0.0.1", "localhost"])
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+CRSF_TRUSTED_ORIGINS = env.list("CRSF_TRUSTED_ORIGINS", default=[])
 
 DATABASES = {
     "default": env.db(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")

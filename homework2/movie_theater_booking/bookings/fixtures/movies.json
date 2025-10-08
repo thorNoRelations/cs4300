@@ -1,0 +1,120 @@
+[
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Alien",
+        "description": "A commercial crew encounters a deadly xenomorph aboard the Nostromo.",
+        "release_date": "1979-05-25",
+        "duration": 117
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Aliens",
+        "description": "Ripley returns to LV-426 with Colonial Marines to face a hive of xenomorphs.",
+        "release_date": "1986-07-18",
+        "duration": 137
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Alien 3",
+        "description": "Ripley crash-lands on Fiorina 161 and faces a new alien threat.",
+        "release_date": "1992-05-22",
+        "duration": 114
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Alien: Resurrection",
+        "description": "Ripley is cloned on the USM Auriga as scientists breed xenomorphs.",
+        "release_date": "1997-11-26",
+        "duration": 109
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Prometheus",
+        "description": "A crew seeks humanity’s origins and awakens a lethal threat.",
+        "release_date": "2012-06-08",
+        "duration": 124
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Alien: Covenant",
+        "description": "Colonists divert to a mysterious world and meet a familiar terror.",
+        "release_date": "2017-05-19",
+        "duration": 122
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Predator",
+        "description": "Commandos are hunted in a jungle by an invisible alien warrior.",
+        "release_date": "1987-06-12",
+        "duration": 107
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Predator 2",
+        "description": "A Predator stalks the streets of a near-future Los Angeles.",
+        "release_date": "1990-11-21",
+        "duration": 108
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Predators",
+        "description": "Elite warriors are dropped onto an alien game-preserve world.",
+        "release_date": "2010-07-09",
+        "duration": 107
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "The Predator",
+        "description": "Upgraded Predators crash to Earth; a ragtag team fights back.",
+        "release_date": "2018-09-14",
+        "duration": 107
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Prey",
+        "description": "A young Comanche warrior faces a Predator in 1719 Great Plains.",
+        "release_date": "2022-08-05",
+        "duration": 100
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Alien vs. Predator",
+        "description": "Humans are caught between xenomorphs and predators in Antarctica.",
+        "release_date": "2004-08-13",
+        "duration": 101
+      }
+    },
+    {
+      "model": "bookings.movie",
+      "fields": {
+        "title": "Aliens vs. Predator: Requiem",
+        "description": "A Predator and a hybrid terrorize a small Colorado town.",
+        "release_date":"2007-12-25",
+        "duration": 94
+      }
+    }
+]
+  

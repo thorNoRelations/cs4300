@@ -9,9 +9,8 @@ class Movie(models.Model):
     release_date = models.DateField()
     # duration in minutes (e.g., 142)
     duration = models.PositiveIntegerField(help_text="Duration in minutes")
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ["title"]
@@ -32,9 +31,8 @@ class Seat(models.Model):
         choices=BookingStatus.choices,
         default=BookingStatus.AVAILABLE,
     )
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ["seat_number"]
@@ -48,8 +46,8 @@ class Booking(models.Model):
     seat = models.ForeignKey(Seat, on_delete=models.PROTECT, related_name="bookings")
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="bookings")
     booking_date = models.DateTimeField(default=timezone.now)
-
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now) 
 
     class Meta:
         ordering = ["-booking_date"]

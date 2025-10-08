@@ -25,6 +25,7 @@ router.register(r"seats", SeatViewSet, basename="seat")
 router.register(r"bookings", BookingViewSet, basename="booking")
 
 urlpatterns = [
+    path("", movies_page, name="home"),
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("movies/", movies_page, name="movies_page"),
